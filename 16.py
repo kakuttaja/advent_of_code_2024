@@ -1,4 +1,5 @@
 from time import perf_counter
+from heapq import heappop, heappush
 
 def is_valid(y, x, grid):
     return 0 <= y < len(grid) and 0 <= x < len(grid[y]) and grid[y][x] != "#"
@@ -6,29 +7,28 @@ def is_valid(y, x, grid):
 def best_path(grid, start):
     done = {}
     q = []
-    q.append((start, 0, (0, 1), [start]))
+    heappush(q, (0, start, (0, 1), {start}))
     best = float('inf')
     p2 = set()
     while q:
-        q = sorted(q, key=lambda x: x[1])
-        (y, x), d, dir, path = q.pop(0)
-        if d <= done.get((y, x, dir), float('inf')):
-            done[(y, x, dir)] = d
-        else: continue
-        if d > best: continue
+        d, (y, x), dir, path = heappop(q)
+        if (y, x, dir) in done and done[(y, x, dir)] < d:
+            continue
+        done[(y, x, dir)] = d
         if grid[y][x] == "E":
-            best = d
-            for p in path:
-                p2.add(p)
+            if d < best:
+                best = d
+                p2 |= set(path)
+            elif d == best:
+                p2 |= set(path)
             continue
         for (dy, dx) in ((-1, 0), (0, 1), (1, 0), (0, -1)):
             ny, nx = y + dy, x + dx
             if is_valid(ny, nx, grid):
-                if (dy, dx) in path: continue
                 if (dy, dx) != dir:
-                    q.append(((ny, nx), d + 1001, (dy, dx), path + [(ny, nx)]))
+                    heappush(q, (d + 1001, (ny, nx), (dy, dx), path | {(ny, nx)}))
                 else:
-                    q.append(((ny, nx), d + 1, (dy, dx), path + [(ny, nx)]))
+                    heappush(q, (d + 1, (ny, nx), (dy, dx), path | {(ny, nx)}))
     return best, len(p2)
 
 def main():
@@ -40,5 +40,5 @@ def main():
 
 if __name__ == '__main__':
     start = perf_counter()
-    print(main())
+    print(*main())
     print(f"This took {round(perf_counter() - start, 2)}s")

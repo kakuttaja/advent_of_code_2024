@@ -1,3 +1,4 @@
+from time import perf_counter
 
 def f(r):
     if sorted(r) != r and sorted(r, reverse=1) != r: return False
@@ -12,4 +13,6 @@ def main():
     return p1, p2
 
 if __name__ == '__main__':
-    print(main())
+    start = perf_counter()
+    print(*main())
+    print(f"This took {round(perf_counter() - start, 2)}s")

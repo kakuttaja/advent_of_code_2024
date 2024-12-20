@@ -1,3 +1,4 @@
+from time import perf_counter
 import re
 
 def main():
@@ -9,4 +10,6 @@ def main():
                 for a, b in m if t.startswith(r"m")))
 
 if __name__ == '__main__':
-    print(main())
+    start = perf_counter()
+    print(*main())
+    print(f"This took {round(perf_counter() - start, 2)}s")

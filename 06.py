@@ -65,6 +65,6 @@ def main():
 
 if __name__ == '__main__':
     start = perf_counter()
-    print(main())
+    print(*main())
     print(f"This took {round(perf_counter() - start, 2)}s")
     

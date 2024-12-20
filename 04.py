@@ -1,3 +1,4 @@
+from time import perf_counter
 import numpy as np
 
 def main():
@@ -17,5 +18,6 @@ def main():
     return p1, p2
 
 if __name__ == '__main__':
-    print(main())
-    
+    start = perf_counter()
+    print(*main())
+    print(f"This took {round(perf_counter() - start, 2)}s")

@@ -17,27 +17,25 @@ def main():
     diskmap2 = [i for i in diskmap]
     end = len(diskmap2)
     for i in range(len(diskmap) - 1, -1, -1):
-        print(f"{end - i}/{end}                        ", end="\r")
+        if i % 1000 == 0:
+            print(f"{end - i}/{end}                        ", end="\r")
         if "." in diskmap and diskmap.index(".") < i:
             diskmap[diskmap.index(".")] = diskmap[i]
             diskmap[i] = "."
     i = len(diskmap2) - 1
-    # print(''.join(diskmap2))
     while i >= 0:
-        print(f"{end - i}/{end}                        ", end="\r")
+        if i % 100 == 0:
+            print(f"{end - i}/{end}                        ", end="\r")
         n = diskmap2[i]
         j = i
         idx = -1
-
         if n == ".":
             i -= 1
             continue
-
         while j >= 0:
             if diskmap2[j - 1] != n:
                 break
             j -= 1
-
         free = 0
         for k in range(diskmap2.index("."), j):
             if diskmap2[k] == ".":
@@ -47,14 +45,12 @@ def main():
             if free == (i - j + 1):
                 idx = k - free + 1
                 break
-
         if idx < j and idx != -1:
             diskmap2 = (diskmap2[:idx] + 
                         diskmap2[j:i + 1] + 
                         diskmap2[idx + (i - j + 1):j] + 
                         ["."] * (i - j + 1) + 
                         diskmap2[i + 1:])
-        # print(''.join(diskmap2))
         i = j - 1
     for i in range(len(diskmap)):
         if diskmap[i] != ".":
@@ -65,6 +61,6 @@ def main():
 
 if __name__ == '__main__':
     start = perf_counter()
-    print(main())
+    print(*main())
     print(f"This took {round(perf_counter() - start, 2)}s")
     
