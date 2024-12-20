@@ -15,13 +15,16 @@ def main():
         else:
             diskmap += ["."] * int(txt[i])
     diskmap2 = [i for i in diskmap]
+    end = len(diskmap2)
     for i in range(len(diskmap) - 1, -1, -1):
+        print(f"{end - i}/{end}                        ", end="\r")
         if "." in diskmap and diskmap.index(".") < i:
             diskmap[diskmap.index(".")] = diskmap[i]
             diskmap[i] = "."
     i = len(diskmap2) - 1
     # print(''.join(diskmap2))
     while i >= 0:
+        print(f"{end - i}/{end}                        ", end="\r")
         n = diskmap2[i]
         j = i
         idx = -1
