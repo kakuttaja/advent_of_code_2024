@@ -8,27 +8,24 @@ def best_path(grid, start):
     done = {}
     q = []
     heappush(q, (0, start, (0, 1), {start}))
+    dirs = ((-1, 0), (0, 1), (1, 0), (0, -1))
     best = float('inf')
     p2 = set()
     while q:
         d, (y, x), dir, path = heappop(q)
-        if (y, x, dir) in done and done[(y, x, dir)] < d:
+        if d > best or (y, x, dir) in done and done[(y, x, dir)] < d:
             continue
         done[(y, x, dir)] = d
         if grid[y][x] == "E":
-            if d < best:
+            if d <= best:
                 best = d
-                p2 |= set(path)
-            elif d == best:
-                p2 |= set(path)
+                p2.update(path)
             continue
-        for (dy, dx) in ((-1, 0), (0, 1), (1, 0), (0, -1)):
+        for (dy, dx) in dirs:
             ny, nx = y + dy, x + dx
             if is_valid(ny, nx, grid):
-                if (dy, dx) != dir:
-                    heappush(q, (d + 1001, (ny, nx), (dy, dx), path | {(ny, nx)}))
-                else:
-                    heappush(q, (d + 1, (ny, nx), (dy, dx), path | {(ny, nx)}))
+                cost = 1001 if dir != (dy, dx) else 1
+                heappush(q, (d + cost, (ny, nx), (dy, dx), path | {(ny, nx)}))
     return best, len(p2)
 
 def main():

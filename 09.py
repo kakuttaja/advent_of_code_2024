@@ -1,63 +1,34 @@
 from time import perf_counter
+from collections import deque
+
+
+def solve(x, p2=False):
+    FS, F, D, fid, idx = [], [], [], 0, 0
+    for i, n in enumerate(x):
+        if i % 2 == 0:
+            D.extend([fid] * int(n))
+            if p2: 
+                FS.append((idx, int(n), fid))
+            else: 
+                FS.extend([(idx + j, 1, fid) for j in range(int(n))])
+            idx += int(n)
+            fid += 1
+        else:
+            F.append((idx, int(n)))
+            D.extend([0] * int(n))
+            idx += int(n)
+    for idx, fsize, fid in reversed(FS):
+        for i, (free_idx, space) in enumerate(F):
+            if free_idx < idx and fsize <= space:
+                D[idx:idx + fsize] = [0] * fsize
+                D[free_idx:free_idx + fsize] = [fid] * fsize
+                F[i] = (free_idx + fsize, space - fsize)
+                break
+    return sum(i * n for i, n in enumerate(D))
 
 def main():
     txt = open("9.txt").read().strip()
-    p1, p2 = 0, 0
-    diskmap = []
-    k = 0
-    for i in range(len(txt)):
-        if i == 0:
-            diskmap += [str(k)] * int(txt[i])
-            k += 1
-        elif i % 2 == 0:
-            diskmap += [str(k)] * int(txt[i])
-            k += 1
-        else:
-            diskmap += ["."] * int(txt[i])
-    diskmap2 = [i for i in diskmap]
-    end = len(diskmap2)
-    for i in range(len(diskmap) - 1, -1, -1):
-        if i % 1000 == 0:
-            print(f"{end - i}/{end}                        ", end="\r")
-        if "." in diskmap and diskmap.index(".") < i:
-            diskmap[diskmap.index(".")] = diskmap[i]
-            diskmap[i] = "."
-    i = len(diskmap2) - 1
-    while i >= 0:
-        if i % 100 == 0:
-            print(f"{end - i}/{end}                        ", end="\r")
-        n = diskmap2[i]
-        j = i
-        idx = -1
-        if n == ".":
-            i -= 1
-            continue
-        while j >= 0:
-            if diskmap2[j - 1] != n:
-                break
-            j -= 1
-        free = 0
-        for k in range(diskmap2.index("."), j):
-            if diskmap2[k] == ".":
-                free += 1
-            else:
-                free = 0
-            if free == (i - j + 1):
-                idx = k - free + 1
-                break
-        if idx < j and idx != -1:
-            diskmap2 = (diskmap2[:idx] + 
-                        diskmap2[j:i + 1] + 
-                        diskmap2[idx + (i - j + 1):j] + 
-                        ["."] * (i - j + 1) + 
-                        diskmap2[i + 1:])
-        i = j - 1
-    for i in range(len(diskmap)):
-        if diskmap[i] != ".":
-            p1 += int(diskmap[i]) * i
-        if diskmap2[i] != ".":
-            p2 += int(diskmap2[i]) * i
-    return p1, p2
+    return solve(txt, 0), solve(txt, 1)
 
 if __name__ == '__main__':
     start = perf_counter()
